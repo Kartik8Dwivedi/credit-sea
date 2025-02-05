@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const reportSchema = new mongoose.Schema({
   basicDetails: {
     name: String,
-    mobilePhone: String,
+    mobile: String,
     pan: String,
     creditScore: Number,
   },
@@ -11,21 +11,22 @@ const reportSchema = new mongoose.Schema({
     totalAccounts: Number,
     activeAccounts: Number,
     closedAccounts: Number,
-    currentBalanceAmount: Number,
-    securedAccountsAmount: Number,
-    unsecuredAccountsAmount: Number,
-    last7DaysCreditEnquiries: Number,
+    currentBalance: Number,
+    securedAmount: Number,
+    unsecuredAmount: Number,
+    recentEnquiries: Number,
   },
   creditAccountsInformation: [
     {
-      creditCard: String,
+      type: String, // 'Credit Card' or 'Loan'
       bank: String,
       address: String,
       accountNumber: String,
-      amountOverdue: Number,
+      overdueAmount: Number,
       currentBalance: Number,
     },
   ],
+  timestamps: true,
 });
 
 const Report = mongoose.model("Report", reportSchema);
