@@ -4,6 +4,7 @@ import morgan from 'morgan';
 
 import ApiRoutes from './Routes/index.js';
 import Config from './Config/serverConfig.js';
+import connectToDB from './Config/databaseConnection.js';
 
 const app = express();
 
@@ -13,6 +14,8 @@ app.use(express.urlencoded({extended:true}));
 app.use(morgan('tiny'));
  
 Config.RateLimiter(app);
+
+connectToDB();
 
 app.use('/api', ApiRoutes);
 

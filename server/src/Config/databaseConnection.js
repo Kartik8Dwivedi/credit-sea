@@ -2,7 +2,7 @@ import { connect } from "mongoose";
 import Config from "././serverConfig.js";
 
 const connectToDB = async () => {
-  await connect(Config.MONGO_URI)
+  await connect(Config.DB_URI)
     .then((conn) => {
       console.log(`Connected to ${conn.connection.host}`);
     })
