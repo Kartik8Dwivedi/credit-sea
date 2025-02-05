@@ -12,7 +12,6 @@ app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 app.use(morgan('tiny'));
  
-// setting up rate limiting
 Config.RateLimiter(app);
 
 app.use('/api', ApiRoutes);

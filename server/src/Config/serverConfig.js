@@ -6,4 +6,5 @@ dotenv.config();
 export default {
   PORT: process.env.PORT,
   RateLimiter: RateLimiter,
+  DB_URI: process.env.MONGODB_URI,
 };
