@@ -11,9 +11,7 @@ router.get("/", (req, res) => {
 });
 
 router.post("/upload", upload.single("file"), validateXML, controller.upload);
-
 router.get("/reports", controller.getAllReports);
-
 router.get("/reports/:id", controller.getReportById);
 
 /*
