@@ -19,6 +19,10 @@ connectToDB();
 
 app.use('/api', ApiRoutes);
 
+app.use((req, res) => {
+  res.status(404).send({ message: 'Route not found' });
+});
+
 app.listen(Config.PORT, () => {
   console.log(`Server is running on http://localhost:${Config.PORT}/`);
 });

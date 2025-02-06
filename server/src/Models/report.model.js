@@ -18,7 +18,6 @@ const reportSchema = new mongoose.Schema({
   },
   creditAccountsInformation: [
     {
-      type: String, // 'Credit Card' or 'Loan'
       bank: String,
       address: String,
       accountNumber: String,

@@ -1,47 +1,53 @@
 import xml2js from "xml2js";
+import fs from "fs";
 import Report from "../Models/report.model.js";
-import extractData from "../utils/extractData.js";
+import extractData from "../Utils/extractData.js";
 
-class MainController{
+class MainController {
+  // upload file and extract data
+  async upload(req, res) {
+    try {
+      const file = req.file;
+      if (!file) {
+        return res.status(400).send({
+          success: false,
+          error: "No file uploaded",
+        });
+      }
 
-    // upload file and extract data
-    async upload(req,res){
-          const file = req.file;
-          if (!file) {
-            console.log("No file uploaded in controller layer");
-            return res.status(400).send({
-                success: false,
-                error: "No file uploaded",
-            });
-          }
+      const filePath = file.path;
+      const fileContent = fs.readFileSync(filePath, "utf8");
 
-          const parser = new xml2js.Parser();
+      const parser = new xml2js.Parser({
+        explicitArray: false,
+        ignoreAttrs: true,
+      });
+      const result = await parser.parseStringPromise(fileContent);
 
-          parser.parseString(file.buffer.toString(), (err, result) => {
-            if (err) {
-                console.log("Error parsing XML in controller layer", err);
-                return res.status(400).send({
-                    success: false,
-                    error: "Failed to parse XML",
-                });
-            }
+      const reportData = extractData(result);
+      const report = new Report(reportData);
+      const savedReport = await report.save();
 
-            const reportData = extractData(result);
-            const report = new Report(reportData);
-            report.save((err, savedReport) => {
-              if (err) {
-                return res.status(500).send("Failed to save report");
-              }
-              res.status(200).json({
-                message: "File uploaded and data extracted successfully",
-                data: {
-                  id: savedReport._id,
-                  status: "completed",
-                },
-              });
-            });
-          });
+      fs.unlinkSync(filePath);
+
+      res.status(200).json({
+        message: "File uploaded and data extracted successfully",
+        data: {
+          id: savedReport._id,
+          status: "completed",
+        },
+      });
+    } catch (error) {
+      console.log("Error extracting data in controller layer", error);
+      if (req.file) {
+        fs.unlinkSync(req.file.path); // Ensure the file is deleted if there's an error
+      }
+      res.status(500).send({
+        success: false,
+        error: "Failed to extract data",
+      });
     }
+  }
 }
 
 export default MainController;
