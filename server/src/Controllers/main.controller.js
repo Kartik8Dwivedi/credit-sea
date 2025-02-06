@@ -4,6 +4,7 @@ import Report from "../Models/report.model.js";
 import extractData from "../Utils/extractData.js";
 
 class MainController {
+
   // upload file and extract data
   async upload(req, res) {
     try {
@@ -35,12 +36,13 @@ class MainController {
         data: {
           id: savedReport._id,
           status: "completed",
+          savedReport,
         },
       });
     } catch (error) {
       console.log("Error extracting data in controller layer", error);
       if (req.file) {
-        fs.unlinkSync(req.file.path); // Ensure the file is deleted if there's an error
+        fs.unlinkSync(req.file.path); 
       }
       res.status(500).send({
         success: false,

@@ -1,5 +1,3 @@
-
-
 function extractData(inputData) {
   const { INProfileResponse } = inputData;
   const applicantDetails = INProfileResponse.Current_Application.Current_Application_Details.Current_Applicant_Details;
@@ -53,14 +51,11 @@ function extractData(inputData) {
     };
   });
 
-  const obj = {
+  return {
     basicDetails,
     reportSummary,
     creditAccountsInformation,
-  };
-  console.log("obj");
-  console.log(obj);
-  return obj
+  }
 }
 
 export default extractData;
