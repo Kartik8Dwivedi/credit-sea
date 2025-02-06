@@ -1,5 +1,4 @@
 import express from "express";
-import multer from "multer";
 import validateXML from "../../Middlewares/ValidateXML.js";
 import MainController from "../../Controllers/main.controller.js";
 import upload from "../../Utils/uploads.js";
@@ -13,11 +12,14 @@ router.get("/", (req, res) => {
 
 router.post("/upload", upload.single("file"), validateXML, controller.upload);
 
+router.get("/reports", controller.getAllReports);
+
+router.get("/reports/:id", controller.getReportById);
+
 /*
 
 TODO Routes
 
-router.post('/extract');
 router.post('/reports');
 router.get('/reports:id');
 

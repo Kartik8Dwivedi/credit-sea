@@ -1,52 +1,72 @@
-import xml2js from "xml2js";
-import fs from "fs";
 import Report from "../Models/report.model.js";
-import extractData from "../Utils/extractData.js";
+import { extract } from "../Services/main.service.js";
+
 
 class MainController {
 
   // upload file and extract data
   async upload(req, res) {
     try {
-      const file = req.file;
-      if (!file) {
-        return res.status(400).send({
-          success: false,
-          error: "No file uploaded",
+        const file = req.file;
+        if (!file) {
+            return res.status(400).send({
+            success: false,
+            error: "No file uploaded",
+            });
+        }
+        const savedReport = await extract(file);
+
+        res.status(200).json({
+            message: "File uploaded and data extracted successfully",
+            data: {
+                id: savedReport._id,
+                status: "completed",
+                savedReport,
+            },
         });
-      }
-
-      const filePath = file.path;
-      const fileContent = fs.readFileSync(filePath, "utf8");
-
-      const parser = new xml2js.Parser({
-        explicitArray: false,
-        ignoreAttrs: true,
-      });
-      const result = await parser.parseStringPromise(fileContent);
-
-      const reportData = extractData(result);
-      const report = new Report(reportData);
-      const savedReport = await report.save();
-
-      fs.unlinkSync(filePath);
-
-      res.status(200).json({
-        message: "File uploaded and data extracted successfully",
-        data: {
-          id: savedReport._id,
-          status: "completed",
-          savedReport,
-        },
-      });
     } catch (error) {
       console.log("Error extracting data in controller layer", error);
-      if (req.file) {
-        fs.unlinkSync(req.file.path); 
-      }
       res.status(500).send({
         success: false,
         error: "Failed to extract data",
+      });
+    }
+  }
+
+  async getAllReports(req,res){
+    try {
+      const reports = await Report.find();
+      res.status(200).json({
+        success: true,
+        data: reports,
+      });
+    } catch (error) {
+      console.log("Error fetching reports in controller layer", error);
+      res.status(500).send({
+        success: false,
+        error: "Failed to fetch reports",
+      });
+    }
+  }
+
+  async getReportById(req,res){
+    try {
+      const report = await Report.findById(req.params.id);
+      if (!report) {
+        return res.status(404).send({
+          success: false,
+          error: "Report not found",
+        });
+      }
+      res.status(200).json({
+        success: true,
+        data: report,
+      });
+    } catch (error) {
+      console.log("Error fetching report in controller layer", error);
+      res.status(500).send({
+        success: false,
+        error: "Failed to fetch report",
       });
     }
   }
